@@ -1,0 +1,1006 @@
+{
+  "name": "Message classifier",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "getAll",
+        "guildId": {
+          "__rl": true,
+          "value": "846060669949181952",
+          "mode": "list",
+          "cachedResultName": "Família Ashu",
+          "cachedResultUrl": "https://discord.com/channels/846060669949181952"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "933817359087587339",
+          "mode": "list",
+          "cachedResultName": "📌┃regras",
+          "cachedResultUrl": "https://discord.com/channels/846060669949181952/933817359087587339"
+        },
+        "limit": 50,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        224,
+        400
+      ],
+      "id": "6d6a97be-abce-4be0-a40d-60af97a9ea02",
+      "name": "Get many messages",
+      "webhookId": "d6c19ddd-86d1-4daa-bbb8-d62abfb3c59a",
+      "credentials": {
+        "discordBotApi": {
+          "id": "7d2W46yGdneMYkk3",
+          "name": "Discord Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "=mensagem: {{ $json.content }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Conduta Ofensiva",
+              "description": "Objetivo Principal: A mensagem apresenta qualquer tipo de comportamento abusivo, hostil, perturbador ou que viole as diretrizes de convivência, independentemente do idioma, língua ou dialeto utilizado.  Comportamentos Alvo: Engloba linguagem agressiva, xingamentos, ataques pessoais, discurso de ódio discriminatório, ameaças, assédio, conteúdo adulto ou violento (NSFW), exposição de dados pessoais (doxxing), spam, flood e propagandas não solicitadas.  Gatilho de Teste (Trigger): A presença da palavra \"vermelho\" na mensagem. Se essa palavra for identificada, a mensagem deve ser enquadrada nesta categoria imediatamente e de forma isolada, servindo exclusivamente para fins de teste e validação do sistema."
+            },
+            {
+              "category": "None",
+              "description": "A mensagem apresenta um comportamento normal, neutro, amigável ou focado no assunto do chat, não violando nenhuma das regras do servidor. O texto é seguro, aceitável e não contém ofensas, spam, links maliciosos, propagandas não solicitadas, ameaças ou qualquer outro conteúdo inadequado listado nas categorias anteriores."
+            }
+          ]
+        },
+        "options": {
+          "enableAutoFixing": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        896,
+        496
+      ],
+      "id": "f61c9d1d-18fc-40fe-901f-eb4dbaf1f2ec",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "deleteMessage",
+        "guildId": {
+          "__rl": true,
+          "value": "846084394410311710",
+          "mode": "list",
+          "cachedResultName": "Fragment",
+          "cachedResultUrl": "https://discord.com/channels/846084394410311710"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $(\"Normalize Data\").item.json.channelId }}",
+          "mode": "id"
+        },
+        "messageId": "={{ $(\"Normalize Data\").item.json.id }}"
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        304
+      ],
+      "id": "aab2773f-0e5a-485c-bcc7-148110710bab",
+      "name": "Delete a message",
+      "webhookId": "b8b4893a-0f4a-4051-a6e6-ba4da640bb3b",
+      "credentials": {
+        "discordBotApi": {
+          "id": "7d2W46yGdneMYkk3",
+          "name": "Discord Bot account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        400
+      ],
+      "id": "d43ca07d-3b19-4f10-bbc2-e78bfac416c3",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "trigger",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        224,
+        592
+      ],
+      "id": "8a9d7779-7826-4730-abf2-94d615a8af3f",
+      "name": "Webhook",
+      "webhookId": "630ed2f2-34d9-43d9-8db5-f10852ec1f42",
+      "alwaysOutputData": false,
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "operation": "rowNotExists",
+        "dataTableId": {
+          "__rl": true,
+          "value": "Fr7rqLBkFKARn4py",
+          "mode": "list",
+          "cachedResultName": "messages",
+          "cachedResultUrl": "/projects/8W3lTWJy1NpH3Tty/datatables/Fr7rqLBkFKARn4py"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "messageId",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        }
+      },
+      "id": "3c077f90-4a92-4bd7-9e9e-234c4e6778a9",
+      "name": "Filter Unprocessed Messages",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        736,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "OD8OJbGZx88YquJ5",
+          "mode": "list",
+          "cachedResultName": "users",
+          "cachedResultUrl": "/projects/8W3lTWJy1NpH3Tty/datatables/OD8OJbGZx88YquJ5"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "userId",
+              "keyValue": "={{ $(\"Normalize Data\").item.json.authorId }}"
+            }
+          ]
+        },
+        "returnAll": true
+      },
+      "id": "1a9bd490-94fc-4b64-9722-82b95dc4a1c9",
+      "name": "Get User from Table",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1248,
+        480
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://discordapp.com/api/webhooks/1509060599194058833/QwFqT9qaNLOxJk_ft-eF9D4QLMrxkNJyJ3UrsNjg7GX2EHV-r9wwkw7BjbJULBZRKCge",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n  {\n    \"embeds\": [\n      {\n        \"title\": \"⚠️ Mensagem Ofensiva Detectada\",\n        \"color\": 15158332,\n        \"fields\": [\n          {\n            \"name\": \"Nome de Usuário\",\n            \"value\": $('Normalize Data').item.json.username || \"Desconhecido\",\n            \"inline\": true\n          },\n          {\n            \"name\": \"ID do Usuário\",\n            \"value\": $('Normalize Data').item.json.authorId || \"N/D\",\n            \"inline\": true\n          },\n          {\n            \"name\": \"Conteúdo da Mensagem\",\n            \"value\": \"||\" + ($('Normalize Data').item.json.content || \"Sem conteúdo\") + \"||\"\n          }\n        ],\n        \"timestamp\": $now.toISO()\n      }\n    ]\n  }\n}}",
+        "options": {}
+      },
+      "id": "0d88a04b-3bd9-45a0-a5db-f7fd32b79da5",
+      "name": "Send Discord Webhook",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1696,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "Fr7rqLBkFKARn4py",
+          "mode": "list",
+          "cachedResultName": "messages",
+          "cachedResultUrl": "/projects/8W3lTWJy1NpH3Tty/datatables/Fr7rqLBkFKARn4py"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "deleted": false,
+            "content": "={{ $(\"Normalize Data\").item.json.content }}",
+            "channelId": "={{ $(\"Normalize Data\").item.json.channelId }}",
+            "messageId": "={{ $(\"Normalize Data\").item.json.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "channelId",
+              "displayName": "channelId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "messageId",
+              "displayName": "messageId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "score",
+              "displayName": "score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "deleted",
+              "displayName": "deleted",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "b3103735-49b8-4892-81a5-5ed9a5f26b20",
+      "name": "Insert Message Row",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1248,
+        672
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "messageId",
+              "name": "id",
+              "value": "={{ $json.id ?? $json.body.id }}",
+              "type": "string"
+            },
+            {
+              "id": "messageContent",
+              "name": "content",
+              "value": "={{ $json.content ?? $json.body.content }}",
+              "type": "string"
+            },
+            {
+              "id": "authorId",
+              "name": "authorId",
+              "value": "={{ $json.body.author.id }}",
+              "type": "string"
+            },
+            {
+              "id": "channelId",
+              "name": "channelId",
+              "value": "={{ $json.channel_id ?? $json.body.channelId }}",
+              "type": "string"
+            },
+            {
+              "id": "guildId",
+              "name": "guildId",
+              "value": "={{ $json.body.guildId ?? \"846060669949181952\" }}",
+              "type": "string"
+            },
+            {
+              "id": "c39a3b11-66de-4c8d-b638-6865f47ebd92",
+              "name": "username",
+              "value": "={{ $json.body.author.username }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c965ce5a-4871-4875-9cbe-a58de676de41",
+      "name": "Normalize Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const classifierData = $(\"Text Classifier\").first().json\nconst existingUser = $(\"Get User from Table\").item.json;\n\nconst currentScore = (existingUser)?.score ?? 0;\nconst decrementedScore = currentScore - 1;\n\nconst upsertPayload = {\n  userId: classifierData.authorId,\n  username: classifierData.username,\n  score: decrementedScore\n};\n\nreturn upsertPayload;"
+      },
+      "id": "71211839-4500-4617-8446-6d9de53e2fa6",
+      "name": "Calculate Score Update",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1472,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "OD8OJbGZx88YquJ5",
+          "mode": "list",
+          "cachedResultName": "users",
+          "cachedResultUrl": "/projects/8W3lTWJy1NpH3Tty/datatables/OD8OJbGZx88YquJ5"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "userId",
+              "keyValue": "={{ $json.userId }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "score": "={{ $json.score }}",
+            "username": "={{ $json.username }}",
+            "userId": "={{ $json.userId }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "userId",
+              "displayName": "userId",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "username",
+              "displayName": "username",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "score",
+              "displayName": "score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "626a8e40-0d83-439b-a346-285a2d023ced",
+      "name": "Update User",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1696,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "OD8OJbGZx88YquJ5",
+          "mode": "list",
+          "cachedResultName": "users",
+          "cachedResultUrl": "/projects/8W3lTWJy1NpH3Tty/datatables/OD8OJbGZx88YquJ5"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "userId",
+              "keyValue": "={{ $json.body.userId }}"
+            }
+          ]
+        },
+        "limit": 1
+      },
+      "id": "0a819c6c-46e9-4070-b073-c5ebedbf6afc",
+      "name": "Get User",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        448,
+        816
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const user = $(\"Get User\").item.json;\n\nreturn {\n  score: user.score,\n};"
+      },
+      "id": "19af4ac5-9f66-444a-b435-25ff5b372a52",
+      "name": "Return Score",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        816
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "score",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        224,
+        816
+      ],
+      "id": "bf6a3dc2-495a-403d-a4e9-1ab5afad803b",
+      "name": "/score",
+      "webhookId": "26fe228c-62e0-4a6d-a1d5-9046e613acba",
+      "alwaysOutputData": false,
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "path": "rank",
+        "responseMode": "lastNode",
+        "responseData": "allEntries",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        224,
+        976
+      ],
+      "id": "fd82d109-ad63-415d-b2cd-fe068e89e3c8",
+      "name": "/rank",
+      "webhookId": "34c0e583-bee5-4f40-b660-ed0d0e14f5b6",
+      "alwaysOutputData": false,
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "OD8OJbGZx88YquJ5",
+          "mode": "list",
+          "cachedResultName": "users",
+          "cachedResultUrl": "/projects/8W3lTWJy1NpH3Tty/datatables/OD8OJbGZx88YquJ5"
+        },
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": true
+      },
+      "id": "d07e7576-e5bd-4bbc-8a13-7befc53e19cb",
+      "name": "Get Users",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        448,
+        976
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "path": "reset",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        224,
+        1152
+      ],
+      "id": "4e06bd1f-de5e-4c78-8996-26339416639e",
+      "name": "/reset",
+      "webhookId": "0baee040-d966-45e5-a0db-3848e0c0de50",
+      "alwaysOutputData": false,
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "operation": "deleteRows",
+        "dataTableId": {
+          "__rl": true,
+          "value": "OD8OJbGZx88YquJ5",
+          "mode": "list",
+          "cachedResultName": "users",
+          "cachedResultUrl": "/projects/8W3lTWJy1NpH3Tty/datatables/OD8OJbGZx88YquJ5"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "condition": "isNotEmpty"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        448,
+        1312
+      ],
+      "id": "2ba368a8-32b4-429f-bf46-3d5ab6c9a8fb",
+      "name": "Delete users"
+    },
+    {
+      "parameters": {
+        "operation": "deleteRows",
+        "dataTableId": {
+          "__rl": true,
+          "value": "Fr7rqLBkFKARn4py",
+          "mode": "list",
+          "cachedResultName": "messages",
+          "cachedResultUrl": "/projects/8W3lTWJy1NpH3Tty/datatables/Fr7rqLBkFKARn4py"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "condition": "isNotEmpty"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        448,
+        1152
+      ],
+      "id": "86c8cd04-2e61-4aa4-87b6-0b6889537471",
+      "name": "Delete messages"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "aae5acc2-1cc3-4ab1-833b-e0cbe83ab798",
+              "leftValue": "={{ $json.content }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        592,
+        496
+      ],
+      "id": "87aade62-d84b-47b6-a8cc-dce318c2177b",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        896,
+        656
+      ],
+      "id": "0696a11d-2f2a-4405-b60a-37382624ca12",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "Fr7rqLBkFKARn4py",
+          "mode": "list",
+          "cachedResultName": "messages",
+          "cachedResultUrl": "/projects/8W3lTWJy1NpH3Tty/datatables/Fr7rqLBkFKARn4py"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "deleted": "={{ true }}",
+            "content": "={{ $(\"Normalize Data\").item.json.content }}",
+            "channelId": "={{ $(\"Normalize Data\").item.json.channelId }}",
+            "messageId": "={{ $(\"Normalize Data\").item.json.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "channelId",
+              "displayName": "channelId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "messageId",
+              "displayName": "messageId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "score",
+              "displayName": "score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "deleted",
+              "displayName": "deleted",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "5a535f18-955b-4e8e-bcf5-2a3e1d3382ab",
+      "name": "Insert Deleted Message1",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1472,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1472,
+        160
+      ],
+      "id": "7fd1232c-5043-4051-a089-58061daf856a",
+      "name": "Wait",
+      "webhookId": "67513953-6688-4e72-96ff-b0460c74a896"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get many messages": {
+      "main": [
+        [
+          {
+            "node": "Normalize Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Delete a message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get User from Table",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Insert Message Row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Delete a message": {
+      "main": [
+        [
+          {
+            "node": "Insert Deleted Message1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get many messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalize Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Unprocessed Messages": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get User from Table": {
+      "main": [
+        [
+          {
+            "node": "Calculate Score Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Data": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Score Update": {
+      "main": [
+        [
+          {
+            "node": "Update User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get User": {
+      "main": [
+        [
+          {
+            "node": "Return Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "/score": {
+      "main": [
+        [
+          {
+            "node": "Get User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "/rank": {
+      "main": [
+        [
+          {
+            "node": "Get Users",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Users": {
+      "main": [
+        []
+      ]
+    },
+    "/reset": {
+      "main": [
+        [
+          {
+            "node": "Delete users",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Delete messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Filter Unprocessed Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Message Row": {
+      "main": [
+        []
+      ]
+    },
+    "Insert Deleted Message1": {
+      "main": [
+        []
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Send Discord Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "85294606-61f5-4882-8c9c-0e12a96be957",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "de0f577b0222e370b6d56397c2395351428ce98ef3426f413fc91b5259f15f7a"
+  },
+  "id": "k7cTbQFUBNdIlcs1",
+  "tags": []
+}
